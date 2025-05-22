@@ -7,13 +7,15 @@
     (substring path 0 (- (string-length path) 4)))
 
 (define (list-commands)
-    (map print
-        (map path->command-name (directory "tools"))))
+    (print (conc
+        "Commands:"
+        (apply string-append
+            (map (lambda (s) (conc " " s))
+                (map path->command-name (directory "tools")))))))
 
 (let* ((args (command-line-arguments)))
     (if (< (length args) 1)
         (begin
-            (print "Available commands:")
             (list-commands))
         (let* ((filename (car args))
                (remaining-args (cdr args)))
