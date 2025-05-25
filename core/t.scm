@@ -16,6 +16,7 @@
 (let* ((args (command-line-arguments)))
     (if (< (length args) 1)
         (begin
+            (print "The t system.")
             (list-commands))
         (let* ((filename (car args))
                (remaining-args (cdr args)))
