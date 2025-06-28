@@ -31,15 +31,19 @@
                         (if (= (length args) 2)
                             (import-data (cadr args))
                             (print "1 argument: path to exported csv")))
-                    ((string=? command "test")
-                        (print-data))
+                    ((string=? command "data")
+                        (print-data (cdr args)))
                     (else (print
                         (conc command " is not a recognized command.")))))))
 
-    (define (print-data)
-        (let ((data (get-all-data)))
-            (for-each process-transaction! data)
-            (print-transactions data)))
+    (define (print-data args)
+        (if (= (length args) 0)
+            (begin
+                (print "String together any of the following commands:")
+                (print "  show - print the data in its current form"))
+            (let ((data (get-all-data)))
+                (for-each process-transaction! data)
+                (execute-data-commands data args))))
 
     (define (import-data filepath)
         (if (not finance-path)
@@ -47,6 +51,21 @@
             (run (mv ,filepath ,(conc finance-path "/raw")))))
     
     ;;;;;;;;;;;;;;; Core Functions
+
+    ;;; DATA commands
+
+    (define (execute-data-commands data commands)
+        (cond
+            ((= (length commands) 0)
+                data)
+            ((string=? (car commands) "show")
+                (print-transactions data)
+                (execute-data-commands data (cdr commands)))
+            (else
+                (display "Unrecognized command: ")
+                (print (car commands)))))
+
+    ;;; top-level: get all the data from all files
 
     (define (get-all-data)
         (let ((autumn-data (get-data "autumn"))
