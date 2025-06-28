@@ -183,7 +183,7 @@
         (let ((parts (string-split text "/")))
             (make-date
                 (string->number (list-ref parts 2))
-                (string->number (list-ref parts 1))
-                (string->number (list-ref parts 0)))))
+                (string->number (list-ref parts 0))
+                (string->number (list-ref parts 1)))))
 
 )
