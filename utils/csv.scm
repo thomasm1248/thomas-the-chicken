@@ -1,5 +1,5 @@
 (module csv
-    (read-file)
+    (read-file file->lines lines->data)
 
     ;; Requires srfi-13 for string splitting
     (import
@@ -9,10 +9,22 @@
 
     ;; Read CSV file into list of rows
     (define (read-file filename)
-        (let ((lines (file->lines filename)))
-            (map (lambda (line)
-                    (parse-csv-line line))
-                lines)))
+        (lines->data
+            (file->lines
+                filename)))
+
+    ;; Read a list of lines from a file
+    (define (file->lines path)
+        (let* ((port (open-input-file path))
+               (lines (read-lines port)))
+            (close-input-port port)
+            lines))
+
+    ;; Parse a list of CSV lines
+    (define (lines->data lines)
+        (map (lambda (line)
+                (parse-csv-line line))
+            lines))
 
     ;;;;;;;;; Helpers
 
@@ -31,11 +43,4 @@
           (loop (cdr chars) field fields (not in-quotes?)))
          (else
           (loop (cdr chars) (cons (car chars) field) fields in-quotes?)))))
-
-    ;; Read a list of lines from a file
-    (define (file->lines path)
-        (let* ((port (open-input-file path))
-               (lines (read-lines port)))
-            (close-input-port port)
-            lines))
 )
